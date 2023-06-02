@@ -2,6 +2,10 @@ require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
+//________________________________________________________________
+// const pokemonsModels= require("./models/Pokemons")  NO ES NECESARIO
+// const typeModels= require("./models/Type")  NO ES NECESARIO
+//________________________________________________________________
 const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
 
@@ -42,15 +46,16 @@ sequelize.models = Object.fromEntries(capsEntries);
 // Para relacionarlos hacemos un destructuring
 const {Pokemon, Type} = sequelize.models;
 
-
+console.log(sequelize.models)
+// pokemonsModels(sequelize) NO ES NECESARIO
+// typeModels(sequelize) NO ES NECESARIO
 //____________________________________________________________________________
 // Aca vendrian las relaciones
-// Product.hasMany(Reviews);
 
-Pokemon.belongsToMany(Type, {through: "typepokemon"})
-Type.belongsToMany(Pokemon, {through: "typepokemon"})
+Pokemon.belongsToMany(Type, {through: "TypePokemon"})
+Type.belongsToMany(Pokemon, {through: "TypePokemon"})
 
-
+//____________________________________________________________________________
 
 
 module.exports = {

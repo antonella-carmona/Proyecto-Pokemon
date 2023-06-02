@@ -1,0 +1,4 @@
+export const GETALLPOKEMONS= "GETALLPOKEMONS";
+export const GETBYNAMEBDD = "GETBYNAMEBDD";
+export const GETBYID = "GETBYID";
+

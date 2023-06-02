@@ -1,40 +1,44 @@
-const URL = "https://pokeapi.co/api/v2/pokemon?limit=100";
+/*EL CONTROLLERS ES EL QUE HACE LA INTERACCION CON FUENTES EXTERNAS DE INFORMACION(API Y BDD)
+ ES EL QUE SE COMUNICA CON ESTAS FUENTES DE INFO*/
+
+const URL = "https://pokeapi.co/api/v2/pokemon";
 const axios = require("axios");
-const express = require("express")
+const {Pokemon} = require("../db")
+
+//findbypk --> trae por id los caracteres de un pokemon de la bdd
 //__________________________________________________________________
-
-
-const getPokemonById = async (req,res)=>{
-  try {
-    const {id} = req.params;
-    
-    const {data} = await axios(`https://pokeapi.co/api/v2/pokemon/${id}`)
-    
-    if(!data.name) throw new Error (`Faltan los personajes con ID: ${id}`)
-   console.log(data.results)
-    const character={
+//Debe funcionar tanto para los pokemones de la API como para los de la bdd
+// este metodo nos ayuda acelerar la busqueda dentro de la base de datos
+//_____________________________________________
+//LLAMADO A API PARA OBTENER EL DETALLE DEL POKEMON
+const getApiPokemonById= async (id)=>{
+  const {data} = await axios(`${URL}/${id}`)
+  if(data){
+    let charactersPokemon={
       id: data.id,
       name: data.name,
-      imagen: data.sprites.front_default,
-      vida: data.stats[0].base_stat,
-      ataque: data.stats[1].base_stat,
-      defensa: data.stats[2].base_stat,
-    //   velocidad: data.,
-    //   altura: data.results.altura,
-      peso: data.peso
+      image: data.sprites.front_default,
+      life: data.stats[0].base_stat,
+      attack: data.stats[1].base_stat,
+      defense: data.stats[2].base_stat,
+      speed: data.stats[5].base_stat,
+      height: data.height,
+      weight: data.weight,
+      // types: data.types.map((tipo)=>tipo.type.name)
+      types: data.types[1].type.name
+      }  
+      return charactersPokemon;
+  }
+  
+}
+//_____________________________________________
+const getPokemonById = async (id, source)=>{
 
-    }
-   return res.status(200).json(character)
+    const pokem = source === "API" ? getApiPokemonById(id)
+     : await Pokemon.findByPk(id);
+      return pokem;
 
 }
-catch (error) {
-return error.message.includes("ID")
-? res.status(404).send(error.message)
-: res.status(500).send(error.response.data.error)
-}
- 
-}
-
 module.exports= {
   getPokemonById
 };
